@@ -94,17 +94,17 @@ export function makeGridDrawData (plot,  cc, useLabels, numOfGridLines=11){
     //TODO the angle does not look good using the center project as a label location.
     //The rotation angle can be used in that case...
     //TODO there was small issue about lines in centain cases, there should be something wrong with the logic
-    const centerScreenPt = plot.type==='hips'?cc. getImageWorkSpaceCoords(centerWpt , plot.zoom):null;
+    const centerScreenPt = plot.plotType==='hips'?cc. getImageWorkSpaceCoords(centerWpt , plot.zoom):null;
 
     if (width > 0 && height >0) {
         const bounds = new Rectangle(0, 0, width, height);
 
         //for hips, the range is always the full sky ranges
-        var range = plot.type==='hips'?[[0, 360], [-90, 90]]: getRange(csys, width, height, cc);
-        const {xLines, yLines, labels} = plot.type==='hips'?computeHipGridLines(cc, csys, range,screenWidth, numOfGridLines, labelFormat,plot)
+        var range = plot.plotType==='hips'?[[0, 360], [-90, 90]]: getRange(csys, width, height, cc);
+        const {xLines, yLines, labels} = plot.plotType==='hips'?computeHipGridLines(cc, csys, range,screenWidth, numOfGridLines, labelFormat,plot)
         :computeImageGridLines(cc, csys, range,screenWidth, numOfGridLines, labelFormat,plot);
 
-        return  drawLines(bounds, labels, xLines, yLines, aitoff, screenWidth, useLabels, cc,plot.type,  centerScreenPt);
+        return  drawLines(bounds, labels, xLines, yLines, aitoff, screenWidth, useLabels, cc,plot.plotType,  centerScreenPt);
     }
 }
 
@@ -858,7 +858,7 @@ function computeImageGridLines(cc, csys, range,  screenWidth, numOfGridLines, la
     const factor = plot.zoomFactor<1?1:plot.zoomFactor;
 
     //get levels for the whole longitude and latitude range
-    var levels = getLevels(range, factor, numOfGridLines, plot.type);
+    var levels = getLevels(range, factor, numOfGridLines, plot.plotType);
 
 
     /* This is where we do all the work. */
@@ -902,7 +902,7 @@ function computeHipGridLines(cc, csys, range,  screenWidth, nGridLines, labelFor
     }
 
     //get levels for the whole longitude and latitude range
-    var levels = getLevels(range, factor, numOfGridLines, plot.type);
+    var levels = getLevels(range, factor, numOfGridLines, plot.plotType);
 
     /*get the view border, NOTE, the border does not mean the maximum and minimum of the range. If there the Prime meridian
     is in the image, the minimum of border is the value in the range from 0-minBorder, and the maximum border is the
@@ -928,7 +928,7 @@ function computeHipGridLines(cc, csys, range,  screenWidth, nGridLines, labelFor
      the points are calculated.
      */
     var doCorrecction=false;
-    if (corners && corners.indexOf(null)===-1 && poles===0  && plot.type==='hips'){
+    if (corners && corners.indexOf(null)===-1 && poles===0  && plot.plotType==='hips'){
         levels = getLevelsHips(viewBorder, centerWp,zeroLonWpt, hasPM, numOfGridLines);
 
         doCorrecction=true;
@@ -956,7 +956,7 @@ function computeHipGridLines(cc, csys, range,  screenWidth, nGridLines, labelFor
     var points=[];
     for (let i=0; i<2; i++) {
         for (let j=0; j<levels[i].length; j++) {
-            points= findLine(cc, csys, i, levels[i][j], vRange, screenWidth, plot.type,centerWp,doCorrecction, hasPM);
+            points= findLine(cc, csys, i, levels[i][j], vRange, screenWidth, plot.plotType,centerWp,doCorrecction, hasPM);
             xLines[offset] = points[0];
             yLines[offset] = points[1];
             offset += 1;
